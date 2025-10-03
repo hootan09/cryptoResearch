@@ -86,7 +86,8 @@ const btcAddr = (pub: Uint8Array, testnet = false) => {
 const ethAddr = (pub: Uint8Array) => {
   const hash = keccak_256(pub.slice(1)); // remove 0x04 prefix
   const addr = bytesToHex(hash.slice(-20));
-  const hashHex = bytesToHex(keccak_256(addr.toLowerCase()));
+  const uint8arrAddr = Uint8Array.from(addr.toLowerCase().split('').map(letter => letter.charCodeAt(0)));
+  const hashHex = bytesToHex(keccak_256(uint8arrAddr));
   let chk = '';
   for (let i = 0; i < 40; i++)
     chk += parseInt(hashHex[i], 16) >= 8 ? addr[i].toUpperCase() : addr[i];
@@ -94,7 +95,8 @@ const ethAddr = (pub: Uint8Array) => {
 };
 
 /* ---------- 5.  test ---------- */
-const mnemonic = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+const mnemonic = 'clog essay release slim furnace common bounce bicycle eight cruel spend auction';
+// const mnemonic = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
 const seed = mnemonicToSeed(mnemonic);
 
 const btcNode = derivePath(seed, "m/44'/0'/0'/0/0");
@@ -104,4 +106,4 @@ const btcPub = secp256k1.getPublicKey(btcNode.key, true);  // compressed
 const ethPub = secp256k1.getPublicKey(ethNode.key, false); // uncompressed
 
 console.log('BTC:', btcAddr(btcPub));
-// console.log('ETH:', ethAddr(ethPub));
+console.log('ETH:', ethAddr(ethPub));
